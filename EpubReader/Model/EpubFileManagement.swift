@@ -9,13 +9,18 @@
 import Foundation
 
 class EpubFileManagement {
-    let doc = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+    let doc = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
     
-    func getEpubs() -> [String] {
-        var epubs: [String] = []
+    func getEpubs() -> [URL] {
+        var epubs: [URL] = []
         let fs = FileManager.default
-        if let files = try? fs.contentsOfDirectory(atPath: doc[0]) {
-            epubs = NSArray(array: files).pathsMatchingExtensions(["epub"])
+        let docPath = URL(fileURLWithPath: doc)
+        if let files = try? fs.contentsOfDirectory(atPath: doc) {
+            let names = NSArray(array: files).pathsMatchingExtensions(["epub"])
+            for name in names {
+                let path = docPath.appendingPathComponent(name)
+                epubs.append(path)
+            }
         }
         return epubs
     }
